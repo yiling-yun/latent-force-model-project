@@ -1,0 +1,18 @@
+# OS generated files #
+.DS_Store
+.DS_Store?
+.idea
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.Rhistory
+
+# MATLAB specific
+*.asv
+*.m~
+
+# Project folders
+.vscode/
