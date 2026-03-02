@@ -1,0 +1,75 @@
+---
+title: "repeatedAnova"
+output: html_document
+date: "2025-01-27"
+---
+
+# By Participant 
+
+```{r}
+dat <- read.csv("response_aligned_by_subj.csv")
+dat
+```
+
+```{r}
+dat$subjNum  <- factor(dat$subjNum)
+dat$type <- factor(dat$type)
+dat$force <- factor(dat$force)
+
+anova_result <- aov(
+  response_aligned ~ type * force + Error(subjNum / (type * force)),
+  data = dat
+)
+
+
+# Output the ANOVA table
+summary(anova_result)
+```
+
+```{r}
+library(dplyr)
+library(effsize)
+library(tidyr)
+
+results <- list() 
+for(f in levels(dat$force)) { 
+  df_sub <- dat %>%
+    filter(force == f) %>%
+    pivot_wider(
+      names_from = type,
+      values_from = response_aligned
+    )
+  
+  # Paired t-test
+  ttest <- t.test(df_sub$generated, df_sub$baseline, paired = TRUE)
+  
+  # Cohen's d
+  d_result <- cohen.d(df_sub$generated, df_sub$baseline, paired = TRUE)
+  
+  # Storing as a sub-list
+  results[[f]] <- list(test = ttest, cohen_d = d_result$estimate)
+}
+
+# --- New: Apply Benjamini-Hochberg ---
+
+# 1. Extract raw p-values
+raw_ps <- sapply(results, function(x) x$test$p.value)
+
+# 2. Extract Cohen's d values
+ds <- sapply(results, function(x) x$cohen_d)
+
+# 3. Apply BH adjustment (method = "fdr")
+adj_ps <- p.adjust(raw_ps, method = "fdr")
+
+# 4. Create a clean final table
+summary_table <- data.frame(
+  Category = names(raw_ps),
+  T_Stat = sapply(results, function(x) x$test$statistic),
+  P_Raw = raw_ps,
+  P_Adj_BH = adj_ps,
+  Cohen_D = ds
+) %>%
+  mutate(Significant = P_Adj_BH < 0.05)
+
+print(summary_table)
+```
