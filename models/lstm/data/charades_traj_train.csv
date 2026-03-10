@@ -1,0 +1,885 @@
+ID,label
+6144,fight
+6145,examine
+6146,argue with
+6147,leave
+6148,throw
+6149,mimic
+6150,push
+6151,tickle
+6153,play with
+5123,hit
+6169,bother
+6170,pull
+6171,flirt with
+6173,hit
+6174,tickle
+6175,block
+6176,scratch
+6177,chase
+6178,ignore
+6179,accompany
+6180,hit
+6181,escape
+6182,hit
+6183,avoid
+1032,creep up on
+6214,leave
+6215,hug
+6216,throw
+6217,examine
+6221,avoid
+6224,capture
+6225,flirt with
+5134,examine
+6230,block
+6231,argue with
+6232,examine
+6233,bother
+6234,throw
+6235,scratch
+6236,avoid
+2141,kiss
+6238,escape
+6240,bother
+6241,tickle
+6243,creep up on
+6244,lead
+6249,approach
+1192,encircle
+6073,capture
+6261,tickle
+6263,hug
+6265,creep up on
+6266,scratch
+6267,bother
+6268,capture
+6271,creep up on
+2176,follow
+6274,fight
+6275,talk to
+6276,talk to
+6278,escape
+6280,escape
+6283,hit
+6284,chase
+6285,escape
+6286,argue with
+6287,encircle
+2192,ignore
+6289,talk to
+6293,approach
+6296,examine
+6297,escape
+6298,chase
+6301,block
+6302,lead
+6303,tickle
+6304,chase
+1052,avoid
+2219,accompany
+2220,block
+5257,kiss
+5121,play with
+5153,avoid
+5154,tickle
+1059,encircle
+2271,push
+2272,huddle with
+2273,block
+2278,creep up on
+2288,leave
+1064,hit
+2296,leave
+1066,pull
+5504,huddle with
+2306,poke
+5164,pull
+4363,chase
+1410,creep up on
+854,bother
+4379,chase
+4382,leave
+1413,mimic
+4384,approach
+4385,leave
+1414,accompany
+4390,throw
+4988,scratch
+2349,poke
+4403,push
+4405,capture
+2358,encircle
+4407,approach
+2360,approach
+1076,poke
+2362,escape
+2363,throw
+2364,chase
+1418,lead
+5173,accompany
+5103,approach
+5517,lead
+1422,examine
+4458,kiss
+1426,follow
+1087,flirt with
+4488,follow
+1090,examine
+4494,hit
+1432,flirt with
+1433,throw
+900,mimic
+5265,flirt with
+4993,herd
+5538,herd
+5198,ignore
+4721,flirt with
+4573,accompany
+1105,escape
+4584,ignore
+5087,ignore
+2573,escape
+4626,ignore
+5287,follow
+4633,hit
+4634,pull
+4635,argue with
+1114,pull
+5211,talk to
+6237,herd
+4656,push
+4660,capture
+1178,follow
+4668,follow
+4673,bother
+4679,accompany
+4690,hit
+4701,pull
+4706,follow
+6760,capture
+6761,mimic
+6762,throw
+6763,chase
+4716,scratch
+6765,accompany
+6766,capture
+6767,talk to
+6768,lead
+6769,huddle with
+4722,avoid
+4727,approach
+6776,encircle
+4732,avoid
+4744,creep up on
+844,leave
+4748,bother
+4757,examine
+4760,chase
+6815,tickle
+5819,poke
+4784,mimic
+4785,lead
+4786,mimic
+4787,kiss
+4790,play with
+4791,fight
+4792,talk to
+4794,play with
+4795,argue with
+4796,scratch
+4797,play with
+4798,follow
+4799,bother
+4800,approach
+4801,escape
+4802,leave
+4803,bother
+4804,creep up on
+4805,hit
+4807,herd
+4808,scratch
+4809,fight
+4810,examine
+4811,block
+4812,mimic
+4813,play with
+4815,argue with
+4817,flirt with
+4818,kiss
+4820,follow
+4821,pull
+4822,flirt with
+4823,block
+4824,avoid
+4825,ignore
+4829,argue with
+6272,approach
+4832,leave
+4833,flirt with
+4834,flirt with
+4836,poke
+4837,accompany
+4839,huddle with
+4840,follow
+4841,mimic
+4842,poke
+4844,bother
+4845,kiss
+4846,kiss
+4847,hit
+4848,kiss
+4849,escape
+4850,examine
+4851,leave
+4852,examine
+4853,flirt with
+4854,argue with
+4855,argue with
+4856,tickle
+4857,pull
+4858,huddle with
+4859,follow
+5589,examine
+4865,leave
+4867,accompany
+4868,play with
+4869,examine
+4871,creep up on
+4872,hug
+4874,talk to
+4875,talk to
+4876,argue with
+4877,encircle
+4879,push
+4880,huddle with
+4882,push
+4883,examine
+4885,pull
+4886,escape
+4887,ignore
+4888,approach
+4889,avoid
+4890,ignore
+4892,hug
+4894,bother
+4895,hug
+913,block
+4897,mimic
+4898,mimic
+4899,tickle
+4900,scratch
+4901,follow
+4902,creep up on
+4903,poke
+4904,ignore
+4905,chase
+4906,lead
+4907,push
+4909,pull
+4910,argue with
+1002,mimic
+4914,bother
+4916,mimic
+4917,leave
+4918,hug
+4919,leave
+4920,play with
+4922,flirt with
+4923,flirt with
+4925,escape
+4927,lead
+4928,herd
+4929,mimic
+4930,talk to
+4932,fight
+4933,argue with
+4934,huddle with
+4935,hug
+4936,capture
+4937,approach
+4938,herd
+4939,creep up on
+4940,huddle with
+4942,throw
+4943,herd
+4944,huddle with
+4945,argue with
+4946,poke
+851,hit
+4948,encircle
+4949,creep up on
+4950,examine
+4951,lead
+856,argue with
+4953,avoid
+858,hug
+5263,kiss
+860,huddle with
+861,pull
+863,avoid
+865,block
+866,lead
+4963,lead
+871,push
+875,follow
+876,mimic
+4973,huddle with
+4974,play with
+4978,escape
+4979,bother
+4980,flirt with
+4981,scratch
+4983,hit
+4984,play with
+889,escape
+4986,chase
+892,chase
+4989,argue with
+4990,mimic
+4992,throw
+897,flirt with
+4994,tickle
+4995,kiss
+4996,bother
+4997,huddle with
+4998,follow
+903,creep up on
+904,huddle with
+5001,mimic
+5002,follow
+5003,block
+5004,play with
+5005,hit
+5006,fight
+5007,hug
+5009,accompany
+5011,flirt with
+5017,hit
+5018,push
+5019,bother
+5020,accompany
+5021,hit
+5024,block
+5025,leave
+5026,avoid
+5027,chase
+5028,flirt with
+5029,scratch
+5030,chase
+5031,examine
+5032,accompany
+5033,huddle with
+5034,avoid
+5035,talk to
+5036,examine
+5037,push
+5038,mimic
+5039,flirt with
+5040,pull
+5041,escape
+5042,leave
+5044,poke
+1182,herd
+5047,mimic
+952,follow
+5049,encircle
+5050,mimic
+5051,hug
+5052,poke
+5053,herd
+5054,leave
+5055,argue with
+5056,chase
+5057,flirt with
+5058,throw
+5059,hit
+5060,argue with
+5061,throw
+5062,follow
+5063,lead
+5064,escape
+5065,follow
+5066,throw
+5067,avoid
+5068,scratch
+5069,examine
+5070,pull
+5071,bother
+5072,poke
+5073,capture
+5074,scratch
+5075,hug
+5076,kiss
+846,poke
+5078,tickle
+5079,lead
+5081,poke
+5082,flirt with
+5083,examine
+5085,accompany
+990,poke
+991,kiss
+5088,kiss
+5089,lead
+5090,bother
+5091,escape
+5092,push
+997,hug
+5094,herd
+5095,argue with
+5097,follow
+5098,argue with
+5099,hug
+5100,accompany
+5101,flirt with
+5102,pull
+1007,chase
+5104,approach
+5105,push
+5106,mimic
+5107,play with
+5108,follow
+5109,follow
+5110,kiss
+1015,huddle with
+1016,ignore
+5113,huddle with
+1018,block
+5115,throw
+5117,play with
+5119,tickle
+1025,herd
+5122,accompany
+1027,avoid
+5125,approach
+5126,hug
+5127,talk to
+5128,creep up on
+5129,fight
+5130,push
+5131,herd
+5132,huddle with
+5135,pull
+1039,scratch
+4952,talk to
+5139,kiss
+1044,encircle
+5142,capture
+5143,creep up on
+5145,argue with
+5146,poke
+5147,avoid
+5148,talk to
+5149,hit
+5150,block
+5151,poke
+5152,examine
+1057,escape
+1058,ignore
+5155,chase
+5156,lead
+5157,argue with
+5158,approach
+5159,pull
+5160,hug
+5161,bother
+5162,bother
+5163,approach
+1068,tickle
+1069,lead
+5166,avoid
+5168,avoid
+5169,argue with
+1074,huddle with
+5171,encircle
+5172,capture
+1077,accompany
+1078,encircle
+5175,poke
+5177,scratch
+5179,tickle
+5180,push
+5181,hug
+1086,bother
+5183,avoid
+5184,scratch
+5185,ignore
+5186,capture
+5187,avoid
+5188,ignore
+5189,scratch
+5190,examine
+5191,pull
+5192,huddle with
+5193,tickle
+5194,bother
+5195,tickle
+5197,capture
+1102,poke
+5200,accompany
+5202,ignore
+5203,argue with
+1109,pull
+1110,herd
+5207,chase
+5208,encircle
+1113,throw
+5210,lead
+1115,lead
+5213,encircle
+1118,bother
+5215,throw
+1120,follow
+5218,examine
+5219,escape
+5220,encircle
+1125,creep up on
+1128,capture
+1131,block
+5237,approach
+5238,lead
+5240,kiss
+5241,push
+5242,kiss
+5244,encircle
+1061,tickle
+5246,chase
+5248,capture
+5249,flirt with
+5250,block
+5251,lead
+5252,tickle
+5255,creep up on
+1161,push
+5258,creep up on
+5259,tickle
+1165,herd
+5262,creep up on
+5264,pull
+1169,chase
+5266,avoid
+5268,play with
+5269,throw
+5270,capture
+5271,creep up on
+5272,kiss
+5273,play with
+5274,tickle
+879,accompany
+1180,block
+5277,tickle
+5278,push
+5279,herd
+5280,avoid
+1188,leave
+5285,throw
+5286,creep up on
+1191,tickle
+5288,block
+5289,approach
+5290,lead
+5291,argue with
+5292,poke
+5293,push
+5294,poke
+5295,approach
+5297,pull
+5298,follow
+5301,encircle
+5302,mimic
+5304,avoid
+5305,lead
+5306,push
+5307,ignore
+5308,leave
+5309,talk to
+5311,huddle with
+5312,kiss
+5313,mimic
+5314,creep up on
+5315,play with
+5316,encircle
+5317,tickle
+5318,ignore
+5319,ignore
+5320,flirt with
+5321,creep up on
+5322,talk to
+5323,throw
+5324,talk to
+5325,approach
+5217,kiss
+5327,tickle
+5329,huddle with
+5330,mimic
+5333,poke
+4985,poke
+5336,flirt with
+5337,poke
+5338,poke
+5339,approach
+5340,encircle
+5341,leave
+5342,scratch
+5343,lead
+5344,play with
+5345,ignore
+5347,pull
+4947,play with
+5349,hug
+5351,encircle
+5353,herd
+5354,huddle with
+5355,play with
+5356,block
+5358,play with
+5359,approach
+5360,play with
+5361,capture
+5362,tickle
+5363,argue with
+5364,escape
+5365,huddle with
+5369,kiss
+5371,follow
+5372,accompany
+5375,leave
+5376,flirt with
+5377,examine
+5378,hug
+5379,capture
+5380,creep up on
+5381,chase
+5382,herd
+5383,hug
+5384,ignore
+5385,play with
+5386,lead
+5335,tickle
+5388,approach
+5389,argue with
+5390,capture
+5391,examine
+5392,talk to
+6019,tickle
+5396,approach
+5397,leave
+5398,lead
+5399,talk to
+5400,throw
+5401,pull
+5402,chase
+5403,poke
+5404,avoid
+5405,lead
+5406,creep up on
+901,follow
+5408,flirt with
+5409,capture
+5410,herd
+902,encircle
+4999,capture
+5000,approach
+5427,kiss
+5428,approach
+5429,play with
+5430,pull
+905,kiss
+5432,mimic
+5433,block
+5434,play with
+5435,flirt with
+5436,huddle with
+906,hug
+5438,kiss
+5439,scratch
+5440,play with
+5441,approach
+5442,lead
+5443,approach
+5446,capture
+5449,encircle
+5450,accompany
+5451,flirt with
+5452,play with
+5453,play with
+5455,creep up on
+5457,tickle
+5458,mimic
+5459,capture
+5461,leave
+5463,scratch
+5464,escape
+5465,follow
+5466,capture
+5467,poke
+5468,kiss
+5469,kiss
+5470,capture
+5473,chase
+5474,poke
+5475,tickle
+5476,lead
+5477,tickle
+5479,avoid
+5484,encircle
+5486,huddle with
+5488,encircle
+5489,hug
+5490,leave
+5491,bother
+5493,tickle
+5494,ignore
+5495,avoid
+5496,play with
+5497,follow
+5498,argue with
+5499,encircle
+5500,huddle with
+5501,push
+5503,examine
+1408,ignore
+1409,scratch
+5506,hit
+5507,poke
+5508,escape
+5509,fight
+5510,poke
+1415,follow
+5512,ignore
+5513,lead
+5514,accompany
+5515,bother
+5516,follow
+1421,lead
+5518,play with
+5519,poke
+5520,fight
+5521,play with
+5522,poke
+5523,herd
+5524,hug
+5525,hug
+5527,escape
+5529,escape
+5532,huddle with
+5534,capture
+5535,capture
+5536,tickle
+5537,throw
+1442,mimic
+5539,follow
+5540,play with
+5541,mimic
+5542,talk to
+5543,encircle
+5544,huddle with
+5546,escape
+5547,scratch
+5549,chase
+5550,flirt with
+5551,hit
+5553,approach
+5554,herd
+5556,play with
+5558,herd
+5562,play with
+5564,examine
+5565,creep up on
+5567,encircle
+5569,flirt with
+5571,leave
+5572,lead
+5573,talk to
+5574,mimic
+5575,hit
+5576,mimic
+5577,avoid
+5578,capture
+5579,block
+5580,poke
+5581,avoid
+5582,huddle with
+5584,chase
+5585,block
+5586,creep up on
+5587,hit
+5588,argue with
+5437,ignore
+5590,lead
+5591,scratch
+5592,hug
+910,argue with
+5608,escape
+5609,argue with
+5610,capture
+5611,avoid
+5612,bother
+5613,capture
+5614,scratch
+5617,approach
+5618,throw
+5619,kiss
+5620,argue with
+5621,throw
+5622,tickle
+5638,block
+5639,tickle
+5640,follow
+5641,hug
+5642,avoid
+5643,scratch
+5644,ignore
+5645,talk to
+5646,tickle
+5647,huddle with
+5648,huddle with
+5649,approach
+5650,creep up on
+5652,approach
+5653,talk to
+5654,throw
+5655,argue with
+5656,bother
+5657,flirt with
+5658,flirt with
+5659,kiss
+5662,talk to
+5663,follow
+5664,lead
+5665,block
+5666,hit
+5667,hit
+5275,flirt with
+5683,huddle with
+5685,block
+5687,hug
+5688,push
+5689,ignore
+5690,talk to
+5691,bother
+5692,fight
+5693,bother
+5695,poke
+5696,examine
+5697,examine
+5048,throw
+5714,leave
+5715,approach
+5716,escape
+5717,argue with
+5718,tickle
+5719,creep up on
+5720,block
+5723,kiss
+5725,huddle with
+5726,approach
+5727,encircle
+6764,capture
+5774,poke
+5775,block
+5776,mimic
+5777,argue with
+5778,tickle
+5779,argue with
