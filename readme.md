@@ -5,6 +5,7 @@ This project presents a parametric model of social perception based on the force
 This repository includes both the modeling code and human behavioral data from labeling and similarity judgment experiments.
 
 ## Project Structure
+```
 project/
 ├── utils/                        # shared config (video order, dataset EDA)
 ├── human/
@@ -20,4 +21,5 @@ project/
     ├── force/                    # latent force model
     ├── lstm/                     # LSTM model
     └── readme.md
+```
 
