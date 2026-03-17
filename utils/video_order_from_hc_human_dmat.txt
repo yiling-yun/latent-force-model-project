@@ -1,0 +1,54 @@
+6017_encircle
+5905_encircle
+5991_examine
+5788_examine
+5787_accompany
+6300_accompany
+4408_lead
+4926_lead
+5809_pull
+6239_pull
+6034_avoid
+4793_avoid
+5816_ignore
+5471_ignore
+6079_bother
+4789_bother
+6004_herd
+1051_herd
+5878_follow
+5866_follow
+6035_capture
+4788_capture
+6005_throw
+4861_throw
+1145_leave
+6058_leave
+5875_escape
+5790_escape
+5987_creep up on
+5876_creep up on
+5849_approach
+5096_approach
+4397_hug
+5528_hug
+5843_huddle with
+5901_huddle with
+6012_kiss
+1167_kiss
+5948_flirt with
+4806_flirt with
+5870_poke
+5570_poke
+6016_scratch
+1121_scratch
+5914_tickle
+1104_tickle
+5902_hit
+6172_hit
+5986_fight
+6026_fight
+5814_talk to
+6013_talk to
+1012_push
+5568_push
