@@ -88,11 +88,14 @@ for i = 1:vidnum
     % Inter-agent displacement vector and unit vector (T × 2)
     dxy = [dataraw(:,1)-dataraw(:,3), dataraw(:,2)-dataraw(:,4)];   % vec 2->1
     safedist = max(datadist, 1e-8);                                  % avoid /0
-    uhat = dxy ./ safedist;                                          % unit vec (T×2)
- 
-    % Projected velocities (element-wise dot product with u_hat)
-    v1_proj = sum(datav(:,1:2) .* uhat, 2);   % agent 1 vel projected onto axis
-    v2_proj = sum(datav(:,3:4) .* uhat, 2);   % agent 2 vel projected onto axis
+    uhat = dxy ./ safedist;
+
+    
+    % Projected velocities as vectors (T × 2 each): scalar projection * unit vector
+    v1_proj_scalar = sum(datav(:,1:2) .* uhat, 2);   % agent 1 speed along axis
+    v2_proj_scalar = sum(datav(:,3:4) .* uhat, 2);   % agent 2 speed along axis
+    v1_proj = v1_proj_scalar .* uhat;   % T×2 vector projection for agent 1
+    v2_proj = v2_proj_scalar .* uhat;   % T×2 vector projection for agent 2
  
     % Stack: [global_vel(4) | global_acc(4) | dist(1) | v1_proj | v2_proj]
     estpara{i} = [datav dataa datadist v1_proj v2_proj];
@@ -181,7 +184,7 @@ if saverst ==1
     if ~exist(dir, 'dir')
         mkdir(dir);
     end
-    writematrix(kinefeatdistval, [dir '/kinematic_feat_hist_dist_with_proj.csv']);
+    writematrix(kinefeatdistval, [dir '/kinematic_feat_hist_dist_with_proj_velocity.csv']);
 end
 
 figure; imagesc(kinefeatdistval);colorbar; title(['kinematic feature model']);
