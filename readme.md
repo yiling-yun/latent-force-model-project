@@ -7,18 +7,19 @@ This repository includes both the modeling code and human behavioral data from l
 ## Project Structure
 ```
 project/
-├── utils/                        # shared config (video order, dataset EDA)
+├── utils/                        # shared config (video order, dataset EDA, trajectory figures)
 ├── human/
 │   ├── behavioralExpCode/        # experiment code in HTML and JavaScript
 │   │   ├── exp1/                 # labeling experiment of 1156 animations
-│   │   ├── exp2/                 # odd-one-out similarity judgment task
-│   │   └── exp3/                 # labeling experiment on force-generated animations
+│   │   ├── exp2/                 # labeling experiment on force-generated animations
+│   │   └── exp3/                 # odd-one-out similarity judgment task
 │   └── behavioralExpDataAndAnalysis/  # human data and analysis
 │       ├── exp1/
 │       ├── exp2/
 │       └── exp3/
 └── models/
     ├── force/                    # latent force model (MATLAB)
+    ├── histo_static/             # control model with histogram input and MLP (Python)
     └── lstm/                     # LSTM model (Python)
 ```
 
