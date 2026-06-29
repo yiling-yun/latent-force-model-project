@@ -1,9 +1,16 @@
+% force model: use the Leonard Jones Potential
+% r is the distance between two interacting particles, 
+% epsilon  governs the strength of the interaction, a measure of how strongly two entities attract each other
+% sigma  is the distance at which the particle-particle potential energy V is zero (often referred to as 'size of the particle'). 
+% The Lennard-Jones potential has its minimum at a distance of r=2^{1/6}*sigma 
+% where the potential energy has the value {\displaystyle V=-eps.
+
 function [estpara] = forcemodelgenprevA(estpara,dataraw)
 
 estparainit = estpara;
 clear estpara; 
 
-% mode = "interactive_selfA";
+mode = "interactive_selfA";
 
 scaler = 100; 
 data = dataraw/scaler;   % scale down the position values for compuation precision 1~40
@@ -42,7 +49,7 @@ for fi = 1+intv:intv:framenum-intv
     
     if countfi == 1
        aposprev = aposobs*0;
-       aposprev(1+intv,:) = aposobs(1,:);  % important for self-prop force estimate
+       aposprev(1+intv,:) = aposobs(1,:);  
        aposprev(2+intv,:) = aposobs(2,:);
     end;
 
@@ -53,26 +60,24 @@ for fi = 1+intv:intv:framenum-intv
     % % corase grid, pred for prev
     aorig = aposprev(round(size(aposobs,1)/2),:);
     distpred = distobs;  % distance between objects
-    distselfpred = distobsself;  % distance between objects
+    distselfpred = distobsself;  % distance between self positions
     distobsselfprev = sqrt((aposobs(1:end,1)-aorig(1)).^2+(aposobs(1:end,2)-aorig(2)).^2);
 
-    if mean(distobsself)<eps %&& mean(distobsselfprev)<0.01
-        eall1 = 0;
-        sall1 = 0;
-        ball1 = 0;
-        eall2 = 0;
-        sall2 = 0;
-        ball2 = 0;        
+    if mean(distobsself)<eps 
+        eall1 = 0; sall1 = 0;  ball1 = 0;
+        eall2 = 0; sall2 = 0;  ball2 = 0;        
     else
-        eall1 = [estparainit(countfi,1) 0]; % strength in L-J potential
-        turndistA= max([max(distselfpred) max(distobsself)]);
-        sall1 = [estparainit(countfi,2) turndistA]; % repul dist in L-J potential
-        ball1 = [estparainit(countfi,3) linspace(max([0,estparainit(countfi,3)-0.2]),estparainit(countfi,3)+0.2,3)]; % attractive coefficient in L-J potential
-    
-        eall2 = [estparainit(countfi,4) 0]; % strength in L-J potential
-        turndist = max([max(distpred) max(distobs)]);
-        sall2 = [estparainit(countfi,5) turndist]; % repul dist in L-J potential
-        ball2 = [estparainit(countfi,6) linspace(max([0,estparainit(countfi,6)-0.2]),estparainit(countfi,6)+0.2,3)]; % attractive coefficient in L-J potential
+        eall1 = [estparainit(countfi,1) 0]; 
+        turndistA= max(distobsself);
+        sall1 = [estparainit(countfi,2) turndistA];
+        ball1 = [estparainit(countfi,3) linspace(max([0,estparainit(countfi,3)-0.2]),estparainit(countfi,3)+0.2,3)];
+
+        eall2 = [estparainit(countfi,4) 0 ];
+        turndist = max(distobs);
+        sall2 = [estparainit(countfi,5) turndist];
+        ball2 = [estparainit(countfi,6) linspace(max([0,estparainit(countfi,6)-0.2]),estparainit(countfi,6)+0.2,3)]; 
+
+
     end;
     paravec = [];
     count = 0;
@@ -100,11 +105,7 @@ for fi = 1+intv:intv:framenum-intv
     
         % Fit parameters using fminsearch
         options = optimset('MaxFunEvals', 1000,'MaxIter',1000,'Display','off');
-        % options = optimoptions('fmincon','Algorithm','sqp');
-        % options = optimoptions(options,'MaxIterations',1e4,'Display','off'); % Recommended
-        % 
-        % lb = [0,0.1,0,0,0.1,0];
-        % ub = [40,40,10,40,40,10];
+
         devval = 10^6;  
         for ci = 1:count
             initialParams = paravec(ci,:);    
@@ -124,7 +125,11 @@ for fi = 1+intv:intv:framenum-intv
         if devval<devvalinit
             estpara(countfi,:) = [fittedParams devval];
         else
-            estpara(countfi,:) = [initialParams devvalinit];
+            % FIX: fall back to Pass-1 estimate (estparainit), not the
+            % loop's last `initialParams` (which is just whatever seed
+            % was tried last). Pairing the latter with devvalinit
+            % corrupts the per-window record.
+            estpara(countfi,:) = [estparainit(countfi,1:6) devvalinit];
         end;
    
   

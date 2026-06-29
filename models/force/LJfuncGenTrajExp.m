@@ -1,6 +1,5 @@
 function [apos,bpos,f_list,fs_list] = LJfuncGenTrajExp(Parameters,is_first_window,aposprev,aposobs_force, bposobs_traj, mode, scaler)
 
-
 % single traj self force
 epsilon_selfA = Parameters(1);   %% strength in L-J potential
 sigma_selfA = Parameters(2); %% repul dist in L-J potential
@@ -27,12 +26,13 @@ f_list = zeros(n,2);
 fs_list = zeros(n,1);
 
 apos = []; bpos = [];
-apos(1,:) = aposprev(round(n/2),:); % generate postion of "a"
 
 if is_first_window
+    apos(1,:) = aposobs_force(1,:); % generate postion of "a"
     velocity_force_list = diff(aposobs_force,1,1); % YY: the second step of the first window is based on force video, agent A
     velocity_force = velocity_force_list(1,:);
 else
+    apos(1,:) = aposprev(round(n/2),:); % generate postion of "a"
     velocity_force_list = diff(aposprev,1,1); % YY: the second step of other windows is based on previously predicted position, agent A
     velocity_force = velocity_force_list(round(n/2),:);
     % velocity_force_list = diff(aposobs_force,1,1); % YY: the second step of the first window is based on force video, agent A
@@ -68,14 +68,14 @@ for k = 3:n
     
         force_inter = unit_vector_inter * f_inter;
     % end
-    f_list2(k,:)= force_inter; %YY: look at force
+    % f_list2(k,:)= force2;
 
     %% single traj force
     % unit vector
     % aorig_force = aposobs_force(1,:);
     % ba = aposobs_force(k-1,:)-aorig_force; % repulsive force, postive; attractive
     % force, negative 
-    vector_selfA = aposobs_force(k-1,:) - aposobs_force(1,:);
+    vector_selfA = aposobs_force(k-1,:) - aposobs_force(1,:);  %%%$$$$$$
     % vector_selfA = apos(k-1,:) - apos(1,:);%YY: 10/21/2025
     % vector_selfA = aposobs_force(k-1,:) - [2.35 1.50];%YY: 10/21/2025
     % %YY: start with the first frame of first window? encircle will have

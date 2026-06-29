@@ -94,6 +94,17 @@ for k = 3:n
     baobs = aposobs(k-1,:)-aposobs(k-2,:);
     r_list1(k,:) = r; 
     
+    % if r<eps && norm(baobs)<eps
+    %     unit_vector = [0 0];
+    %     force1 = [0 0];
+    % else
+    %     if r<eps && norm(baobs)>eps   % the boundary case when stationary in first few frames, then move within a temporal window
+    %         unit_vector = baobs/norm(baobs); 
+    %         r = norm(baobs);
+    %     else
+    %         unit_vector = ba /r; 
+    %     end;
+
     if r<eps
         force1 = [0 0];
     else

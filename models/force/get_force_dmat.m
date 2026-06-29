@@ -4,14 +4,14 @@ clear all;
 close all; 
 
 exlab = 'exp2';
-vermodel = 3; % 3: V3 ref para + 6 para 
+vermodel = 2; 
 
 input = 'stim'; % 'stim' has 54 selected animations.
 
 
 saverst = 1; % save distance matrix
 
-load(['./rst/exp2/estpart_forcemodel.v' num2str(vermodel) '.mat'],'estpara');
+load(['./rst/exp2/estpart_forcemodel.v' num2str(vermodel) '_all.mat'],'estpara');
 
 [numS,txtS,~] = xlsread('charades_traj_summary.xlsx','selected_exp2');
 semlabel = txtS(1:end,1);

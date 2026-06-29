@@ -5,7 +5,7 @@
 clear all; 
 close all; 
 
-input = 'stim';% 'all';% %% 'all' has 1133 animations. 'stim' has 27 selected animations.
+input = 'stim';% 'all';% %% 'all' has 1133 animations. 'stim' has 54 selected animations (2 animations per category).
 
 vermodel = 3; 
 
@@ -15,7 +15,7 @@ loadflag = 0; % 1: load the previous saved file; 0; compute the file
 plotflagtraj = 1; % 1: plot traj and save in files; 0: no traj plot
 
 rng(1); 
-[num,txt,~] = xlsread('charades_traj_summary.xlsx','all');
+[num,txt,~] = xlsread('charades_traj_summary.xlsx','selected_1133'); %'all'
 
 if strcmp(input, 'stim')
     exlab = 'exp2';

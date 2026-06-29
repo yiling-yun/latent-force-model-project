@@ -12,6 +12,7 @@ xpred(:,3:4) = bpos;
 % objective function: minimize dist between obs and pred; parameters should
 % be greater than 0
 xobs = x(:,1:4);
+%sse = mean(sqrt(sum((xpred-xobs).^2,2)));
 sse = mean(sqrt(sum((xpred-xobs).^2,2))) + ...
     10^6*((parameters(1)<0)+(parameters(1)>40)+(parameters(2)<0)+(parameters(2)>40)+(parameters(3)<0)+...
     (parameters(4)<0)+(parameters(4)>40)+(parameters(5)<0)+(parameters(5)>40)+(parameters(6)<0));

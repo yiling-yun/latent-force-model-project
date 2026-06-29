@@ -69,7 +69,7 @@ for k = 3:n
     %% interactive force
     % unit vector
     ba = apos(k-1,:)-bpos(k-1,:); % repulsive force, postive; attractive force, negative
-    r = norm(ba); 
+    r = norm(ba); %$$
     r_list(k,:) = r; 
     if r<eps
         epsilon2 = 0;

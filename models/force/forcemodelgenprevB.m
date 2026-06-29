@@ -1,3 +1,8 @@
+% force model: use the Leonard Jones Potential
+% first estimate force parameters for AgentA self-propelled force and
+% interactive force
+% second, estimate force parameters for AgentB (ref) self-propelled force
+
 function [estpara] = forcemodelgenprevB(estpara,dataraw)
 
 % A is non-reference agent, estimate self-propelled force and interactive force parameters
@@ -40,18 +45,18 @@ for fi = 1+intv:intv:framenum-intv
 
     % extropolate b trajectory more to the future
     %% step 1: grid search
-
-    if mean(distobsself)<0.01 
+ 
+    if mean(distobsself)<0.01 %&& mean(distobsselfprev)<0.01
         eall1 = 0;
         sall1 = 0;
         ball1 = 0;    
     else
-  
-        eall1 = [estparainit(countfi,8) 0];%% strength in L-J potential
+   
+        eall1 = [estparainit(countfi,8) 0];
         turndistA= max(distobsself);
-        sall1 = [estparainit(countfi,9) turndistA];%% repul dist in L-J potential
-        ball1 = [estparainit(countfi,10) linspace(max([0,estparainit(countfi,10)-0.2]),estparainit(countfi,10)+0.2,3)]; % attractive coefficient in L-J potential
-
+        sall1 = [estparainit(countfi,9) turndistA ];
+        ball1 = [estparainit(countfi,10) linspace(max([0,estparainit(countfi,10)-0.2]),estparainit(countfi,10)+0.2,3)];
+   
     end;
 
     paravec1 = [];
@@ -110,11 +115,14 @@ for fi = 1+intv:intv:framenum-intv
     if devval<devvalinit
         estpara(countfi,:) = [fittedParams devval];
     else
-        estpara(countfi,:) = [initialParams devvalinit];
+        % FIX: fall back to Pass-1 estimate (estparainit), not the loop's
+        % last `initialParams` (just whatever seed was tried last).
+        % Pairing the latter with devvalinit corrupts the per-window record.
+        estpara(countfi,:) = [estparainit(countfi,8:10) devvalinit];
     end;
  
     [aposgen,~,~] = LJfuncself(estpara(countfi,:),aposprev,aposobs,1);
-    aposprev = aposobs; 
+    aposprev = aposobs; %aposgen;%
 
 end;
 

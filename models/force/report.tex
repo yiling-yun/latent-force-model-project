@@ -1,0 +1,409 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\title{\textbf{Dynamic Force Representations Underlie Visual Perception of Social Movements}\\[6pt]
+\large Model and Code Summary Report}
+\author{Yun et al.\ $\cdot$ PNAS (submitted March 3, 2026)}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------
+\section{Overview}
+
+This report documents the latent force model developed in Yun et al.\ for studying how humans perceive social interactions from motion trajectories. The paper draws on the classic Heider--Simmel (1944) paradigm, in which simple geometric shapes moving together evoke rich social narratives (e.g., chasing, fighting, helping).
+
+The central hypothesis is that \textbf{latent force representations} --- parameterized as attraction and repulsion between two agents --- serve as mid-level representations in human social perception, akin to representations used in intuitive physics. The model is grounded in a modified Lennard-Jones (LJ) potential~\cite{lennardjones1925} and is evaluated against human behavioral data from three studies using animations from the Charade dataset~\cite{roemmele2016}.
+
+% ---------------------------------------------------------------
+\section{The Charade Dataset}
+
+The Charade dataset contains \textbf{1,156 animations} depicting \textbf{32 categories} of social interactions between two black triangles on a white background. A larger triangle represents Agent A (the acting agent) and a smaller triangle represents Agent B (the target). Animations were created by human participants who were instructed to depict an action (e.g., ``make the big triangle fight the little triangle'') by dragging the two shapes on a touchscreen (iPad). Key properties of the dataset are summarized below.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Metric} & \textbf{Mean} & \textbf{Min} & \textbf{Median} & \textbf{Max} \\
+\midrule
+Duration (frames) & 333.5 & 7 & 239 & 2554 \\
+Duration (seconds) & 6.67 & 0.14 & 4.78 & 51.08 \\
+Speed of Agent A (inter-frame, px) & 11.68 & 0.00 & 2.11 & 1083.4 \\
+Speed of Agent B (inter-frame, px) & 6.52 & 0.00 & 0.00 & 1034.7 \\
+Relative distance A--B (inter-frame, px) & 696.0 & 0.90 & 580.9 & 4154.3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Videos were encoded at 50 frames per second, with a resolution of $4000 \times 3000$ pixels. Initial positions were fixed: Agent A at $(2350, 1500)$ and Agent B at $(1650, 1500)$.
+
+% ---------------------------------------------------------------
+\section{The Latent Force Model}
+
+\subsection{Modified Lennard-Jones Potential}
+
+Each agent's motion is governed by a modified Lennard-Jones (LJ) potential. The standard LJ force along the line connecting two particles at distance $r$ is:
+
+\begin{equation}
+    \mathrm{LJ}(r) = 48\,\varepsilon \left[ \frac{\sigma^{12}}{r^{13}} - \beta \cdot \frac{\sigma^{6}}{r^{7}} \right]
+\end{equation}
+
+\noindent where:
+\begin{itemize}
+    \item $\varepsilon$: force strength (overall magnitude of the interaction).
+    \item $\sigma$: characteristic distance; defines the boundary of an agent's ``personal space.''
+    \item $\beta$: attractive coefficient. When $\beta = 0$, the force is purely repulsive; when $\beta = 1$, a full attraction well is present.
+\end{itemize}
+
+\noindent The parameters $\varepsilon$ and $\beta$ capture the \emph{rate of change} of forces as a function of inter-agent distance. The model makes two modifications relative to the standard LJ potential:
+
+\paragraph{Modification 1 --- Bounded repulsive force.} Unlike the standard LJ potential where repulsion diverges as $r \to 0$, social interactions are characterised by a bounded maximum repulsive force reflecting the physical limits of the human body. The force is therefore capped at a ceiling $c$:
+
+\begin{equation}
+    F(r) = \begin{cases}
+        \mathrm{LJ}(r) & \text{if } \mathrm{LJ}(r) \leq c \\
+        c & \text{if } \mathrm{LJ}(r) > c
+    \end{cases}
+\end{equation}
+
+\noindent In the MATLAB implementation (\texttt{LJmodifiedfunction.m} and \texttt{LJmodifiedselffunction.m}), this is realised as a hyperbolic-tangent saturation with $c = F_{\max} = 2$:
+
+\begin{equation}
+    F_{\text{new}} = \begin{cases}
+        F_{\max} \tanh\!\left(\dfrac{f}{F_{\max}}\right) & \text{if } f > F_{\max} \\[6pt]
+        f & \text{otherwise}
+    \end{cases}
+\end{equation}
+
+\paragraph{Modification 2 --- Self-propelled force.} In addition to the interaction force between agents, each agent has a \emph{self-propelled} force that captures its own directional momentum. The self-propelled force acts along the agent's own displacement direction (from frame $k-2$ to $k-1$) rather than toward the other agent.
+
+\subsection{Force Components}
+
+For each temporal window, the model estimates \textbf{9 parameters} in total, decomposed as follows:
+
+\begin{description}
+    \item[Agent A --- Interactive force $F_I^A$] (parameters: $\varepsilon_A, \sigma_A, \beta_A$): captures attraction or repulsion of Agent A toward/away from Agent B. The force vector is directed along the line from B to A.
+
+    \item[Agent A --- Self-propelled force $F_S^A$] (parameters: $\varepsilon_{sA}, \sigma_{sA}, \beta_{sA}$): captures Agent A's inertial tendency to continue its own motion.
+
+    \item[Agent B --- Self-propelled force $F_S^B$] (parameters: $\varepsilon_{sB}, \sigma_{sB}, \beta_{sB}$): captures Agent B's autonomous self-propelled dynamics.
+\end{description}
+
+\subsection{Composite Motion Model for Agent A}
+
+The trajectory of Agent A is generated by combining both force components. At each frame $k$ within a window, the composite force is:
+
+\begin{equation}
+    \mathbf{F}_k = F_I^A \cdot \hat{\mathbf{u}}_{\text{int},k} + F_S^A \cdot \hat{\mathbf{u}}_{\text{self},k}
+\end{equation}
+
+\noindent where $\hat{\mathbf{u}}_{\text{int},k}$ is the unit vector from B to A, and $\hat{\mathbf{u}}_{\text{self},k}$ is the unit vector of A's current displacement direction, rotated into a frame consistent with the interactive force direction via a 2-D rotation matrix (\texttt{rot2D.m}).
+
+Position is updated by Euler integration ($\Delta t = 1$ frame):
+
+\begin{align}
+    \mathbf{a}_k &= 0.1 \times \mathbf{F}_k \\
+    \mathbf{v}_k &= \mathbf{v}_{k-1} + \mathbf{a}_k \\
+    \mathbf{x}_k &= \mathbf{x}_{k-1} + \mathbf{v}_k
+\end{align}
+
+\noindent Agent B's trajectory is predicted independently using only its self-propelled force $F_S^B$ (\texttt{LJfuncself.m}).
+
+% ---------------------------------------------------------------
+\section{Parameter Estimation}
+
+\subsection{Sliding Temporal Window}
+
+Parameter estimation is performed independently within each temporal window of width $2w + 1$ frames, with $w = 5$ (i.e., 11 frames per window), centred at time points spaced by a stride of $w = 5$ frames. This allows the latent force parameters to vary over the course of an animation.
+
+\noindent All positions are scaled by $1/100$ before estimation to bring values into the range $\sim[0, 40]$ for numerical stability. Positions are rescaled after computation.
+
+\subsection{Objective Function}
+
+Within each window $W_\tau = \{t : \tau - w \leq t \leq \tau + w\}$, parameters $\theta = (\varepsilon, \sigma, \beta)$ are chosen to minimise the trajectory prediction error:
+
+\begin{equation}
+    \mathcal{L}(\theta) = \sum_{t \in W_\tau} \left( \|\hat{\mathbf{a}}_t(\theta) - \mathbf{a}_t\|_2 + \|\hat{\mathbf{b}}_t(\theta) - \mathbf{b}_t\|_2 \right)
+\end{equation}
+
+\noindent where $\hat{\mathbf{a}}_t$ and $\hat{\mathbf{b}}_t$ are positions predicted by forward integration of the force model, and $\mathbf{a}_t$, $\mathbf{b}_t$ are the observed positions. Hard parameter bounds are enforced via a large penalty ($10^6$) added to $\mathcal{L}$ when any parameter falls outside its valid range.
+
+\subsection{Two-Stage Optimisation}
+
+\paragraph{Stage 1 --- Coarse grid search.} A discrete grid over $(\varepsilon, \sigma, \beta)$ provides robust initialisation by selecting parameters that minimise $\mathcal{L}$ separately for self-propelled and interaction forces.
+
+\begin{itemize}
+    \item \textbf{For self-propelled force:} $\varepsilon \in [0.1, 20]$ (10 points); $\beta \in [0, 1]$ (10 points); $\sigma \in [0.02,\, d_{\max}^{\text{self}}]$ (20 points, where $d_{\max}^{\text{self}}$ is the maximum observed intra-agent inter-frame displacement within the window).
+    \item \textbf{For interaction force:} $\varepsilon$ and $\beta$ use the same ranges; $\sigma \in [0.3,\, d_{\max}^{\text{inter}} + 2]$ (20 points, where $d_{\max}^{\text{inter}}$ is the maximum observed inter-agent distance).
+\end{itemize}
+
+\paragraph{Stage 2 --- Continuous refinement.} The best grid solution is passed as the initial point to the \textbf{Nelder--Mead simplex algorithm} (\texttt{fminsearch} in MATLAB) with a maximum of 1000 function evaluations and 1000 iterations. If multiple grid solutions tie for the minimum, each is used as a separate starting point and the best result is retained.
+
+\subsection{Two-Pass Procedure}
+
+To ensure temporal consistency between adjacent windows, estimation proceeds in \textbf{two passes} (implemented in \texttt{forcemodelprevobsA/B.m} and \texttt{forcemodelgenprevA/B.m}):
+
+\begin{enumerate}
+    \item \textbf{Pass 1 (observed context):} Parameters are estimated using the \emph{observed} positions of the previous window as context (\texttt{forcemodelprevobsA.m}, \texttt{forcemodelprevobsB.m}).
+    \item \textbf{Pass 2 (generated context):} Parameters are re-estimated using the \emph{predicted/generated} positions from Pass 1 as context, so that the estimation is consistent with the generative process (\texttt{forcemodelgenprevA.m}, \texttt{forcemodelgenprevB.m}).
+\end{enumerate}
+
+\noindent The Pass 2 grid search is restricted to a local neighbourhood around the Pass 1 solution (e.g., $\beta \pm 0.2$), making it efficient. The final force parameters from Pass 2 are used for all downstream analyses.
+
+\begin{algorithm}[h]
+\caption{Windowed Latent Force Estimation}
+\begin{algorithmic}[1]
+\For{each animation trajectory}
+    \State Pad the first 11 frames; scale positions by $1/100$
+    \State Segment into temporal windows $W_\tau$ with stride $w = 5$
+    \For{each window $W_\tau$}
+        \State \textbf{Pass 1}: Coarse grid search using observed previous state
+        \State \hspace{1em} Refine via Nelder--Mead for self-propelled and interaction parameters
+        \State \textbf{Pass 2}: Coarse local grid search using predicted previous state
+        \State \hspace{1em} Refine via Nelder--Mead
+        \State Store final 9 parameters $[\varepsilon_{sA},\sigma_{sA},\beta_{sA},\ \varepsilon_A,\sigma_A,\beta_A,\ \varepsilon_{sB},\sigma_{sB},\beta_{sB}]$
+    \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+% ---------------------------------------------------------------
+\section{Feature Representations}
+
+\subsection{Force Feature Vector}
+
+For each temporal window, the 9 estimated LJ parameters form the \textbf{force feature vector}:
+
+\begin{equation}
+    \mathbf{f}_{\text{force}} = \langle \varepsilon_{sA},\, \sigma_{sA},\, \beta_{sA},\ \varepsilon_A,\, \sigma_A,\, \beta_A,\ \varepsilon_{sB},\, \sigma_{sB},\, \beta_{sB} \rangle
+\end{equation}
+
+\subsection{Kinematic Feature Vector}
+
+As a comparison model, a 9-element \textbf{kinematic feature vector} is extracted at the same temporal stride (\texttt{get\_kinematic\_feat\_dmat.m}):
+
+\begin{equation}
+    \mathbf{f}_{\text{kine}} = \langle v_{xA},\, v_{yA},\, v_{xB},\, v_{yB},\, a_{xA},\, a_{yA},\, a_{xB},\, a_{yB},\, d_{AB} \rangle
+\end{equation}
+
+\noindent where $v$ denotes velocity (first-order displacement), $a$ denotes acceleration (second-order displacement), and $d_{AB}$ is the inter-agent distance.
+
+\subsection{Histogram-Based Descriptive Representation}
+
+Both feature types can be summarised into a fixed-length descriptor via histograms (\texttt{get\_force\_dmat.m}, \texttt{get\_kinematic\_feat\_dmat.m}):
+
+\begin{enumerate}
+    \item Frames in which both agents are stationary (zero displacement over the adjacent $\pm 5$ frames) are excluded.
+    \item For each feature dimension $d$, 200 bins are constructed spanning $\bar{f}_d \pm 20\,\hat{\sigma}_d$, where mean and standard deviation are computed globally across all windows and all videos.
+    \item Normalised histogram counts (relative frequencies) are computed per animation.
+\end{enumerate}
+
+\noindent The pairwise dissimilarity between videos $i$ and $j$ is:
+
+\begin{equation}
+    D(i,j) = \sum_{d=1}^{9} \sqrt{ \sum_{b=1}^{200} \left( h_{i,d}(b) - h_{j,d}(b) \right)^2 }
+\end{equation}
+
+\noindent where $h_{i,d}$ is the normalised histogram for video $i$, feature dimension $d$. The resulting distance matrix is reordered to a canonical video order and saved to \texttt{distMat/}.
+
+\subsection{LSTM Dynamics-Based Representation}
+
+To capture temporal dynamics, a \textbf{Long Short-Term Memory (LSTM)} network is trained on the same feature sequences in a supervised classification task. Architecture: 2 layers, 64 hidden units each, followed by a fully connected output layer with softmax over 32 interaction categories. Training uses cross-entropy loss against distributed human response labels from Study 1. Data split: 884 training / 195 validation / 54 test animations (videos with $< 24$ frames were excluded). Pairwise similarity between test animations is computed as the \textbf{cosine distance} in the LSTM's penultimate-layer feature space.
+
+% ---------------------------------------------------------------
+\section{Experimental Studies}
+
+\subsection{Study 1: Human Impressions of Social Movements}
+
+\paragraph{Stimuli.} All 1,156 animations from the Charade dataset.
+
+\paragraph{Participants.} 732 participants (after exclusions), each judging 68 animations. Each animation was labeled by at least 37 participants.
+
+\paragraph{Task.} Participants selected the label that ``best describes the animation'' from the set of 32 interaction labels.
+
+\paragraph{Results.} Human impressions were broadly distributed rather than unanimous: for short animations of a few seconds, participants often selected labels different from the original Charade instruction label. Nevertheless, animations sharing the same Charade category tended to produce more similar response distributions, forming a clear clustering structure in a t-SNE visualisation of the response-distribution space.
+
+\subsection{Study 2: Modeling Human Similarity Judgments}
+
+\paragraph{Stimuli.} 54 animations (2 per category) from 27 interaction categories: hug, huddle, kiss, approach, flirt, scratch, poke, creep, tickle, hit, talk, fight, escape, lead, herd, accompany, throw, ignore, leave, avoid, bother, push, capture, follow, pull, examine, and encircle.
+
+\paragraph{Participants.} 585 participants, each completing 45 odd-one-out trials. Each pair was tested against at least 20 different third animations (15,327 unique triplets).
+
+\paragraph{Task.} On each trial, participants viewed three animations side by side and selected the ``odd one out.'' Pairwise similarity scores were computed as the proportion of trials in which neither animation in a pair was selected as the odd one out.
+
+\paragraph{Models compared.} Five models were evaluated, differing in feature type and temporal modelling approach:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Model} & \textbf{Features} & \textbf{Approach} & \textbf{$\rho$ with humans} \\
+\midrule
+Kinematic (descriptive) & velocity, acceleration, $d_{AB}$ & Histogram & .295 \\
+Force (descriptive) & LJ parameters & Histogram & .381 \\
+Kinematic (dynamics) & velocity, acceleration, $d_{AB}$ & LSTM & .578 \\
+Force (dynamics) & LJ parameters & LSTM & .516 \\
+Kinematic + Force (dynamics) & combined & LSTM & \textbf{.607} \\
+\midrule
+\multicolumn{3}{l}{Noise ceiling (Spearman-Brown corrected)} & .881 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Key findings.}
+\begin{itemize}
+    \item Among histogram-based models, force features outperformed kinematic features ($\rho = .381$ vs.\ $.295$).
+    \item LSTM dynamics-based models consistently outperformed their histogram-based counterparts.
+    \item The combined kinematic + force LSTM achieved the highest correlation ($\rho = .607$).
+    \item Semi-partial correlation analysis showed that force features explained \emph{unique} variance in human judgments beyond kinematic features (descriptive: $sr = .160$, $p < .001$; dynamics: $sr = .185$, $p < .001$).
+    \item Conversely, kinematic features did not explain unique variance beyond force features in the descriptive model ($sr = .014$, $p = .599$), but did in the dynamics model ($sr = .345$, $p < .001$).
+\end{itemize}
+
+\subsection{Study 3: Human Impressions of Force-Generated Animations}
+
+\paragraph{Generation procedure.} New animations were generated by \emph{recombining} force parameters and trajectories from different source videos (implemented in \texttt{main\_gen\_exp\_traj.m}, \texttt{LJfuncCompforceGen1.m}):
+
+\begin{enumerate}
+    \item Select Agent B's trajectory from one source animation.
+    \item Estimate force parameters from a \emph{different} target animation (the ``force video'').
+    \item Before applying the force, align the force video with the B-trajectory video by choosing the axis reflection (horizontal or vertical) that minimises positional mismatch (\texttt{mirrorx.m}, \texttt{mirrory.m}).
+    \item Apply the interactive force parameters from the target animation to generate a new trajectory for Agent A, using Agent B's observed trajectory as the reference.
+    \item Output as a GIF animation.
+\end{enumerate}
+
+\noindent Eight force categories were selected: encircle, leave, accompany, hit, capture, fight, scratch, and bother. Eight Agent B trajectories were selected for diversity. This yielded $8 \times 8 = 64$ generated animations, plus 8 original animations (used as baselines, with triangles replaced by circles).
+
+\paragraph{Participants.} 50 participants (from Prolific), each completing 76 trials (64 generated + 8 original + 4 filler attention checks).
+
+\paragraph{Task.} Participants viewed one animation at a time and selected the label (from the 8 force categories) that best described Agent A's action toward Agent B.
+
+\paragraph{Results.} For all 8 force categories, participants selected the intended force label at a rate significantly above chance (all $p < .001$). For 6 out of 8 categories, generated animations produced the same impression as the original animations. For ``bother'', generated animations produced a significantly stronger impression than originals ($t(49) = 3.86$, $p = .002$). This demonstrates that the latent force representation is causally effective in shaping human social perception.
+
+% ---------------------------------------------------------------
+\section{Code Structure and File Reference}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{>{\ttfamily}l p{9cm}}
+\toprule
+\normalfont\textbf{File} & \textbf{Description} \\
+\midrule
+main\_force\_model\_est.m & Main driver: loads trajectories from \texttt{charades\_traj\_summary.xlsx}, runs two-pass parameter estimation for all videos, saves \texttt{estpara} to \texttt{.mat}. \\
+forcemodelprevobsA/B.m & Pass 1 estimation: coarse grid + \texttt{fminsearch} using observed previous-window context. Estimates 6 (A) + 3 (B) parameters per window. \\
+forcemodelgenprevA/B.m & Pass 2 estimation: local grid + \texttt{fminsearch} using generated previous-window context. \\
+LJfunc.m & Core LJ force integrator for a single force component (interactive or self). \\
+LJfuncself.m & Self-propelled force integrator for Agent B (self mode only). \\
+LJfuncCompforce.m & Composite integrator combining interactive + self-propelled forces for Agent A; uses \texttt{rot2D} for directional alignment. \\
+LJfuncCompforceobs.m & Composite integrator variant used during Pass 1 (observed context). \\
+LJfuncCompforceGen1.m & Generation integrator for Study 3: applies force parameters from one video to Agent B's trajectory from another. \\
+LJfuncParaEstobs.m & Objective function for Pass 1 (SSE + bound penalties). \\
+LJfuncParaCompforceEst.m & Objective function for Pass 2 (combined self + interactive, SSE + penalties). \\
+LJfuncParaEstself3.m & Objective function for self-propelled parameter estimation only. \\
+LJmodifiedfunction.m & Tanh-saturated LJ force for interactive forces ($F_{\max} = 2$). \\
+LJmodifiedselffunction.m & Tanh-saturated LJ force for self-propelled forces ($F_{\max} = 2$). \\
+rot2D.m & 2-D rotation matrix aligning the self-propulsion direction to the interactive force direction. \\
+mirrorx.m / mirrory.m & Compute axis-reflected versions of trajectories and return the reflection that minimises positional distance to a reference trajectory. \\
+get\_force\_dmat.m & Builds the force-feature pairwise distance matrix via parameter histograms; saves to \texttt{distMat/force\_hist\_dist.csv}. \\
+get\_kinematic\_feat\_dmat.m & Builds the kinematic-feature pairwise distance matrix via velocity/acceleration histograms; saves to \texttt{distMat/kinematic\_feat\_hist\_dist.csv}. \\
+main\_gen\_exp\_traj.m & Generates new animations for Study 3 by recombining force fields and B trajectories; outputs GIFs and saves positions to \texttt{.mat}. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------
+\section{Repository Structure}
+
+\begin{verbatim}
+project/
+├── utils/                          video order, dataset EDA
+├── human/
+│   ├── behavioralExpCode/
+│   │   ├── exp1/                   labeling experiment (1156 animations)
+│   │   ├── exp2/                   odd-one-out similarity task (54 animations)
+│   │   └── exp3/                   labeling of force-generated animations
+│   └── behavioralExpDataAndAnalysis/
+│       ├── exp1/
+│       ├── exp2/
+│       └── exp3/
+└── models/
+    ├── force/                      latent force model (this report)
+    │   ├── main_force_model_est.m
+    │   ├── main_gen_exp_traj.m
+    │   ├── get_force_dmat.m
+    │   ├── get_kinematic_feat_dmat.m
+    │   ├── LJfunc*.m
+    │   ├── forcemodel*.m
+    │   ├── mirrorx.m, mirrory.m, rot2D.m
+    │   └── rst/                    output: estpara .mat files, trajectory plots
+    ├── lstm/                       LSTM comparison model
+    └── readme.md
+\end{verbatim}
+
+% ---------------------------------------------------------------
+\section{Discussion and Limitations}
+
+The model demonstrates that a parsimonious set of force primitives (attraction, repulsion, and self-propulsion) can account for structured human similarity judgments of social movements. Key broader points from the paper:
+
+\begin{itemize}
+    \item \textbf{Compositionality:} The force decomposition allows the model to be extended to interactions involving more than two agents (e.g., collective pedestrian dynamics).
+    \item \textbf{Real-time capability:} The efficiency of the sliding-window force extraction enables real-time updating during live observation.
+    \item \textbf{Generativity:} The model's ability to generate new animations supports an ``analysis-by-synthesis'' account of perception.
+    \item \textbf{Limitation --- agent role assignment:} The model assigns the interactive force to Agent A by convention. For response-driven actions (e.g., escape), the responding agent's role is not explicitly captured.
+    \item \textbf{Limitation --- abstraction level:} Some interaction labels (e.g., ``bother'') are more abstract than others (e.g., ``encircle''). Leveraging semantic representations could capture finer-grained distinctions.
+    \item \textbf{Limitation --- heading/gaze:} The Charade dataset did not include heading or gaze direction in the animations; incorporating these could improve model fidelity for gaze-sensitive interactions.
+\end{itemize}
+
+% ---------------------------------------------------------------
+\begin{thebibliography}{9}
+
+\bibitem{heider1944}
+Heider, F., \& Simmel, M. (1944).
+An experimental study of apparent behavior.
+\textit{The American Journal of Psychology}, \textbf{57}(2), 243--259.
+
+\bibitem{lennardjones1925}
+Lennard-Jones, J.\ E. (1925).
+On the forces between atoms and ions.
+\textit{Proceedings of the Royal Society of London. Series A}, \textbf{109}, 584--597.
+
+\bibitem{roemmele2016}
+Roemmele, M., Morgens, S.\ M., Gordon, A.\ S., \& Morency, L.-P. (2016).
+Recognizing human actions in the motion trajectories of shapes.
+\textit{Proceedings of the 21st International Conference on Intelligent User Interfaces}, 271--281.
+
+\bibitem{hochreiter1997}
+Hochreiter, S., \& Schmidhuber, J. (1997).
+Long short-term memory.
+\textit{Neural Computation}, \textbf{9}(8), 1735--1780.
+
+\bibitem{helbing1995}
+Helbing, D., \& Molnar, P. (1995).
+Social force model for pedestrian dynamics.
+\textit{Physical Review E}, \textbf{51}, 4282.
+
+\end{thebibliography}
+
+\end{document}

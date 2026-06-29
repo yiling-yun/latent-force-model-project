@@ -1,12 +1,21 @@
+% force model: use the Leonard Jones Potential
+% first estimate force parameters for AgentA self-propelled force and
+% interactive force
+% second, estimate force parameters for AgentB (ref) self-propelled force
+
 function [estpara] = forcemodelprevobsB(dataraw)
 
 % A is non-reference agent, estimate self-propelled force and interactive force parameters
+
 % B is reference, estimate self-propelled force parameter
 scaler = 100; 
 data = dataraw/scaler;   % scale down the position values for compuation precision 1~40
 
 framenum = size(data,1); 
 intv = 5;%  % temporal window +/- intv.
+% if framenum < 2*intv+1  % for very short videos
+%      intv = 2;
+% end;
 
 countfi = 0; 
 
@@ -26,19 +35,26 @@ for fi = 1+intv:intv:framenum-intv
     end;
 
 
+    % extropolate b trajectory more to the future
     %% step 1: grid search
-
     distself = sqrt((aposobs(2:end,1)-aposobs(1:(end-1),1)).^2+(aposobs(2:end,2)-aposobs(1:(end-1),2)).^2);
     
     eall1 = linspace(0.1,20,10);   %% strength in L-J potential
     turndistA = max(distself);
     sall1 = linspace(0.02,(turndistA),20);%% repul dist in L-J potential
     ball1 = linspace(0,1,10); %% attractive coefficient in L-J potential
-
+    
+    % eall1 = linspace(0.1,20,20);   %% strength in L-J potential
+    % turndistA= max(distself);
+    % sall1 = linspace(0.02,(turndistA),40);%% repul dist in L-J potential
+    % ball1 = linspace(0,1,20); %% attractive coefficient in L-J potential
+    % 
 
     indx1 = []; dev1 = [];
     % self-traj force
+    % aorig = aposobs(1,:);
     aorig = aposprev(round(size(aposobs,1)/2),:);
+    % val = mean(abs(aposobs - repmat(aorig,size(aposobs,1),1)),'all');
     count = 0;
     if mean(distobsself)<0.01   % no movements
         indx1 = 1;
@@ -73,6 +89,25 @@ for fi = 1+intv:intv:framenum-intv
    
 
     %% step2: use fminsearch to fine-tune
+    % if length(indx1)>1 
+    %     if length(indx1)==125000 
+    %         warning(['frame ' num2str(fi) ', more min init:' num2str(length(indx1)) ]);
+    %         %error('too many local minimum, check');
+    %     end;
+    % end;
+    % if size(paravec1,1)>1
+    %     [~, indxr1]=sortrows(paravec1,4);
+    %     if length(indx1) == 1
+    %         indx1 = indxr1(1:1);
+    %     end;
+    % end;
+    % 
+    % if length(indx1)>1
+    %     if sum(paravec1(indx1,2))==0   % estimated sigma is 0. 
+    %         indx1 = 1;
+    %         paravec1(indx1,:) = [0,0,0,0];
+    %     end;
+    % end;
     % Initial guesses for [a, b, c]
     initialParams = [paravec1(indx1(1),1:3) ];
 

@@ -39,6 +39,7 @@ for k = 3:n
     % unit vector
     bpos = apos(k-2,:);
     ba = apos(k-1,:) - bpos;  
+    %ba = aposobs(k-1,:) - bpos; %YY: HJ 3/20: aposbos is based on observed, not predicted apos
     baobs = aposobs(k-1,:) - aposobs(k-2,:); 
 
     r = norm(ba); 
